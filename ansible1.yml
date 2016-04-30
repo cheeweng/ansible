@@ -1,0 +1,39 @@
+[root@ansible webservers]# ansible-playbook webserver.yaml -f 1 --ask-pass
+SSH password: 
+
+PLAY [all] ******************************************************************** 
+
+GATHERING FACTS *************************************************************** 
+ok: [server1.example.com]
+
+TASK: [ensure apache is at the latest version] ******************************** 
+ok: [server1.example.com]
+
+TASK: [Enable the httpd service] ********************************************** 
+changed: [server1.example.com]
+
+NOTIFIED: [start apache] ****************************************************** 
+changed: [server1.example.com]
+
+PLAY RECAP ******************************************************************** 
+server1.example.com        : ok=4    changed=2    unreachable=0    failed=0   
+
+[root@ansible webservers]# 
+
+--------------------------------------------------------------------------------------
+
+
+
+---
+- hosts: all
+  remote_user: root
+  tasks:
+  - name: ensure apache is at the latest version
+    yum: name=httpd state=latest
+  - name: Enable the httpd service
+    service: name=httpd enabled=yes
+    notify:
+    - start apache
+  handlers:
+    - name: start apache
+      service: name=httpd state=started
