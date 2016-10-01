@@ -1,0 +1,17 @@
+---
+- hosts: all
+  remote_user: root
+  tasks:
+  - name: ensure apache is at the latest version
+    yum: name=httpd state=latest
+  - name: Enable the httpd service
+    service: name=httpd enabled=yes
+  - name: Enable the httpd service
+    copy: src=/root/ansible_templates/httpd/Red-Hat.png dest=/var/www/html/Red-Hat.png
+  - name: copy application code to document root
+    template: src=/root/ansible_templates/httpd/index.html.j2 dest=/var/www/html/index.html
+    notify:
+    - start apache
+  handlers:
+    - name: start apache
+      service: name=httpd state=started
